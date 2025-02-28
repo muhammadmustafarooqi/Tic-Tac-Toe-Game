@@ -2,7 +2,7 @@ let boxes = document.querySelectorAll(".box");
 let resetBtn = document.querySelector("#rest-btn");
 let msgContainer = document.querySelector(".message-container");
 let drawmessage = document.querySelector(".message-container-draw");
-let newGamebtn = document.querySelector("#restart-btn");
+let newGameBtns = document.querySelectorAll("#restart-btn");
 let msg = document.querySelector("#msg");
 let msg1 = document.querySelector("#msg1");
 
@@ -30,42 +30,50 @@ boxes.forEach((box) => {
         }
         box.disabled = true;
         checkWin();
+        checkDraw();
     });
 });
 
 const showWinner = (win) => {
     msg.innerText = `Player ${win} wins!`;
     msgContainer.classList.add("show");
+    setTimeout(() => {
+        msgContainer.classList.remove("show");
+    }, 10000);
     disabledBoxes();
 };
 
 const showDraw = () => {
     msg1.innerText = "It's a draw!";
     drawmessage.classList.add("show");
+    setTimeout(() => {
+        drawmessage.classList.remove("show");
+    }, 8000);
     disabledBoxes();
 };
 
 const checkWin = () => {
-    let filled = 0;
     for (let pattern of winPatterns) {
         let pos1Val = boxes[pattern[0]].innerText;
         let pos2Val = boxes[pattern[1]].innerText;
         let pos3Val = boxes[pattern[2]].innerText;
 
-        if (pos1Val !== "" && pos2Val !== "" && pos3Val !== "") {
-            if (pos1Val === pos2Val && pos2Val === pos3Val) {
-                showWinner(pos1Val);
-                return;
-            }
+        if (pos1Val !== "" && pos1Val === pos2Val && pos2Val === pos3Val) {
+            console.log("winner", pos1Val);
+            showWinner(pos1Val);
+            return;
         }
     }
+};
+
+const checkDraw = () => {
+    let isDraw = true;
     boxes.forEach((box) => {
-        if (box.innerText !== "") {
-            filled++;
+        if (box.innerText === "") {
+            isDraw = false;
         }
     });
-
-    if (filled === 9) {
+    if (isDraw) {
         showDraw();
     }
 };
@@ -90,5 +98,7 @@ const resetGame = () => {
     drawmessage.classList.remove("show");
 };
 
-newGamebtn.addEventListener("click", resetGame);
+newGameBtns.forEach((btn) => {
+    btn.addEventListener("click", resetGame);
+});
 resetBtn.addEventListener("click", resetGame);
